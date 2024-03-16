@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Status Water dan Wind</title>
+</head>
+<body>
+  <h1>Status Water dan Wind</h1>
+  <p>Data terakhir diperbarui: <span id="last-updated"></span></p>
+  <ul>
+    <li>Water: <span id="water-value"></span> meter (<span id="water-status"></span>)</li>
+    <li>Wind: <span id="wind-value"></span> meter per detik (<span id="wind-status"></span>)</li>
+  </ul>
+
+  <script>
+    const updateData = () => {
+      fetch("data.json")
+        .then(response => response.json())
+        .then(data => {
+          const waterValue = document.getElementById("water-value");
+          const waterStatus = document.getElementById("water-status");
+          const windValue = document.getElementById("wind-value");
+          const windStatus = document.getElementById("wind-status");
+          const lastUpdated = document.getElementById("last-updated");
+
+          waterValue.textContent = data.status.water;
+          waterStatus.textContent = getStatus(data.status.water, "water");
+          windValue.textContent = data.status.wind;
+          windStatus.textContent = getStatus(data.status.wind, "wind");
+          lastUpdated.textContent = new Date().toLocaleString();
+        });
+    };
+
+    const getStatus = (value, type) => {
+      if (type === "water") {
+        if (value < 5) return "Aman";
+        else if (value < 9) return "Siaga";
+        else return "Bahaya";
+      } else {
+        if (value < 6) return "Aman";
+        else if (value < 16) return "Siaga";
+        else return "Bahaya";
+      }
+    };
+
+    setInterval(updateData, 15000);
+    updateData();
+  </script>
+</body>
+</html>
